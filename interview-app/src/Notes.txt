@@ -83,4 +83,7 @@ Front End Notes:
     keys will stay the same.
 
 10. What is context / context API?
-    content is a more advanced for of prop drilling that eliminates the need to 
+    context is a more advanced form of prop drilling that eliminates the need to directly pass props to only the child. It allows you to create your context outside of the
+    component, create your state within any component, and pass it down to any child component down the line by wrapping a provider around its return statement. 
+
+    
