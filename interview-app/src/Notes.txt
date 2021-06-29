@@ -1,0 +1,86 @@
+Front End Notes: 
+
+1. Name Lifecycle Methods and their purpose.
+    3 main parts to the React Lifecycle:
+        1. constructor / Initialized State  / static getDerivedStateFromProps / Render / Mounting
+
+            constructor: sets the initial state and only runs once. Only place you can use 'this.state', everywhere else you have to use this.setState.
+            getDerivedStateFromProps: static, runs after constructor, has role in initial render and re-render, and its purpose is to get state from change in props. It is static
+                because you dont want users to access this keyword directy inside the method. Returns newState or null by default.
+            render: this is where you display your jsx. You cannot setState here
+            componentDidMount: Use of this method can be for use with 3rd party libraries where you need to have the render done before using this library.
+
+        2. getDerivedStateFromProps / shouldComponentUpdate / Re-render / getSnapshotBeforeUpdate / componentDidUpdate:
+
+            shouldComponentUpdate: Used if you need to update state. Everytime setState is run you re-render. Sometimes you dont need to re-render and can use this lifecycle hook
+                to give access to previous state and new state, you can compare and then return true/false if you want to update.
+            getSnapshotBeforeUpdate: "pre-commit phase" . before it gets rendered you can take a snapshot and save that state. This is useful if there are scrolls going on changing
+                state and you want to know what size the window was or where the cursor was before this change in state so you can go back to it in the future.
+            conponentDidUpdate: "I am done" you can do whatever you did in componentDidMount here.
+
+        3. Death / unMounting
+
+            conponentWillUnmount: this is when component dies. Before it unmounts you can do something here. It is generally used to perform clean-up for any DOM-elements or timers
+                created in componentWillMount
+
+2. Why do we use arrow functions in react?
+    simple: In react you can have on-click handlers. Its not really a class method, its a class property. utilizing arrow functions gets rid of the issue where you have a function 
+    within a class and you are utilizing the this keyword. With a regular function, you can only refer to what variables are inside of that function, whereas with an arrow function 
+    you are able to assess the state in the main class component by calling this.state.
+    Arrow functions also make it possible to avoid using curly brackets and a the word return when writing one liner functions. (eg. const addition = (a, b) => a + b)
+
+3. How do you prevent components from re-rendering? 
+    You can utilize 3 different methods to do so:
+        1. shouldComponentUpdate() : before component is rendered it checks should i render or not in this method. You return false it stops the rendering / true it re-renders.
+        2. React.PureComponent: Actually compares the previous state and new state. If its the same then it stops rendering automatically.
+        3. React.memo: utilizing memoization. If inputs are the same then output is the same. 
+
+4. What is Unidirectional data flow in React (How does it flow in one direction)? 
+    In react whenever you are trying to type into the dom, the dom itself doesnt actually update state. In order to change the screen, you need to change the data. So for a 
+    form for instance, in order for the form to be filled as you type, you need to add a function that is setting the state with every keystroke. This is a direct example of 
+    Unidirectional flow.
+
+5. What is the difference between state and props?
+    State: when a component defines data locally within itself. State is mutable 
+    props: when that same data gets passed down to a child component. Props are unmutable. Only way to change props is in the parent component where setState is utilized.
+
+6. What does it mean to 'lift state up' in React?
+    Lifting state up refers to when you have two components utilizing the same state, and you want to prop-drill properly so you need to create a parent component that 
+    creates the state and passes it down to the two child components. The lift part just means you are lifting the state to a parent that will drop it down to both children.
+
+7. What is the difference between a controlled component vs uncontrolled component?
+    a controlled component is one that creates state and then displays that state so that the state is now tied with the component. Whatever value is in the components return
+    is tied with the data within in.
+    uncontrolled: not bound to any bit of your state and no onChange. You can take inputRefs, pass it to an element, and you can utilize inputRef.current.value to obtain the 
+    direct underlining value.
+
+8. What are Refs in React?
+    utilize a ref attribute within each element to obtain an escape patch to start comunicating with the virtual dom rather than the actual dom. This can be used with the focus
+    method. You get the underlining dom node in this example below and you are utilizing the focus method to focus on the input as your cursor scrolls into rather than just
+    when you click inside of it:
+
+                                                        import React, { useRef, useEffect } from 'react';
+                                                        
+                                                        export default function App() {
+                                                            const inputRef = useRef();
+                                                            useEffect(() => {
+                                                                inputRef.current.focus();
+                                                            }, [])
+
+                                                            return (
+                                                                <div className='App'>
+                                                                    <input ref={inputRef} type='text' />
+                                                                </div>
+                                                            );   
+                                                        }
+    
+9. What are keys and what is their purpose when creating lists?
+    Keys are essential for the Dom to maintain the difference between different elements. When you have two elements with the same keys, the dom could have trouble understanding
+    which element needs to be changed when called. You can avoid these issues by creating a new unique key for every element created.
+    It is common for developers to just use an index for a key but this can cause many problems down the line as if an element were removed the keys could alter. 
+    In lists this is especially important as lists elements can be rendered way more than they need to be with nonunique keys. The dom sees that all keys are different and
+    re-renders when there is a sudden change on the physical dom, whereas having unique keys like Date.now() keys allows for unncessary re-renders when something changes as the
+    keys will stay the same.
+
+10. What is context / context API?
+    content is a more advanced for of prop drilling that eliminates the need to 
