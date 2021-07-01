@@ -497,4 +497,409 @@ Front End Notes:
 39. What are error boundaries in React v16?
     Error boundaries are components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the component 
     tree that crashed.
-    A class component becomes an error boundary if it defines a new lifecycle method called componentDidCatch(error, info) or static getDerivedStateFromError() :
+    A class component becomes an error boundary if it defines a new lifecycle method called componentDidCatch(error, info) or static getDerivedStateFromError() 
+
+40. What is CRA and its benefits?
+    The create-react-app CLI tool allows you to quickly create & run React applications with no configuration step.
+
+    Let's create Todo App using CRA:
+
+    # Installation
+    $ npm install -g create-react-app
+
+    # Create new project
+    $ create-react-app todo-app
+    $ cd todo-app
+
+    # Build, test and run
+    $ npm run build
+    $ npm run test
+    $ npm start
+    It includes everything we need to build a React app:
+
+    React, JSX, ES6, and Flow syntax support.
+    Language extras beyond ES6 like the object spread operator.
+    Autoprefixed CSS, so you don’t need -webkit- or other prefixes.
+    A fast interactive unit test runner with built-in support for coverage reporting.
+    A live development server that warns about common mistakes.
+    A build script to bundle JS, CSS, and images for production, with hashes and sourcemaps.
+
+41. Why we need to be careful when spreading props on DOM elements?
+    When we spread props we run into the risk of adding unknown HTML attributes, which is a bad practice. 
+    Instead we can use prop destructuring with ...rest operator, so it will add only required props.
+
+    For example,
+
+        const ComponentA = () =>
+        <ComponentB isDisplay={true} className={'componentStyle'} />
+
+        const ComponentB = ({ isDisplay, ...domProps }) =>
+        <div {...domProps}>{'ComponentB'}</div>
+
+42. What will happen if you use props in initial state?
+    If the props on the component are changed without the component being refreshed, the new prop value will never be displayed because the constructor function 
+    will never update the current state of the component. The initialization of state from props only runs when the component is first created.
+
+    The below component won't display the updated input value:
+
+        class MyComponent extends React.Component {
+        constructor(props) {
+            super(props)
+
+            this.state = {
+            records: [],
+            inputValue: this.props.inputValue
+            };
+        }
+
+        render() {
+            return <div>{this.state.inputValue}</div>
+        }
+        }
+    Using props inside render method will update the value:
+
+        class MyComponent extends React.Component {
+        constructor(props) {
+            super(props)
+
+            this.state = {
+            record: []
+            }
+        }
+
+        render() {
+            return <div>{this.props.inputValue}</div>
+        }
+        }
+
+43. Is it good to use setState() in componentWillMount() method?
+    Yes, it is safe to use setState() inside componentWillMount() method. But at the same it is recommended to avoid async initialization in componentWillMount() 
+    lifecycle method. componentWillMount() is invoked immediately before mounting occurs. It is called before render(), therefore setting state in this method will not 
+    trigger a re-render. Avoid introducing any side-effects or subscriptions in this method. We need to make sure async calls for component initialization happened in 
+    componentDidMount() instead of componentWillMount().
+
+    componentDidMount() {
+    axios.get(`api/todos`)
+        .then((result) => {
+        this.setState({
+            messages: [...result.data]
+        })
+        })
+    }
+
+44. How do you conditionally render components?
+    In some cases you want to render different components depending on some state. JSX does not render false or undefined, so you can use conditional short-circuiting to 
+    render a given part of your component only if a certain condition is true.
+
+        const MyComponent = ({ name, address }) => (
+        <div>
+            <h2>{name}</h2>
+            {address &&
+            <p>{address}</p>
+            }
+        </div>
+        )
+    If you need an if-else condition then use ternary operator.
+
+        const MyComponent = ({ name, address }) => (
+        <div>
+            <h2>{name}</h2>
+            {address
+            ? <p>{address}</p>
+            : <p>{'Address is not available'}</p>
+            }
+        </div>
+        )
+
+45. How you use decorators in React?
+    You can decorate your class components, which is the same as passing the component into a function. Decorators are flexible and readable way of modifying component functionality.
+
+        @setTitle('Profile')
+        class Profile extends React.Component {
+            //....
+        }
+
+        /*
+        title is a string that will be set as a document title
+        WrappedComponent is what our decorator will receive when
+        put directly above a component class as seen in the example above
+        */
+        const setTitle = (title) => (WrappedComponent) => {
+        return class extends React.Component {
+            componentDidMount() {
+            document.title = title
+            }
+
+            render() {
+            return <WrappedComponent {...this.props} />
+            }
+        }
+        }
+
+46. How do you memoize a component?
+    There are memoize libraries available which can be used on function components.
+
+    For example moize library can memoize the component in another component.
+
+         const MemoComponent = React.memo(function MemoComponent(props) {
+            /* render using props */
+        });
+        OR
+        export default React.memo(MyFunctionComponent);
+
+47. How you implement Server Side Rendering or SSR?
+
+    React is already equipped to handle rendering on Node servers. A special version of the DOM renderer is available, which follows the same pattern as on the client side.
+
+    import ReactDOMServer from 'react-dom/server'
+    import App from './App'
+
+    ReactDOMServer.renderToString(<App />)
+
+    This method will output the regular HTML as a string, which can be then placed inside a page body as part of the server response. On the client side, React detects the 
+    pre-rendered content and seamlessly picks up where it left off.
+
+48. What is the purpose of getDerivedStateFromProps() lifecycle method?
+    The new static getDerivedStateFromProps() lifecycle method is invoked after a component is instantiated as well as before it is re-rendered. It can return an object 
+    to update state, or null to indicate that the new props do not require any state updates.
+
+        class MyComponent extends React.Component {
+            static getDerivedStateFromProps(props, state) {
+                // ...
+            }
+        }
+
+49. Do Hooks replace render props and higher order components?
+    Both render props and higher-order components render only a single child but in most of the cases Hooks are a simpler way to serve this by reducing nesting in your tree.
+
+50. What is the recommended ordering of methods in component class?
+    Recommended ordering of methods from mounting to render stage:
+
+        static methods
+        constructor()
+        getChildContext()
+        componentWillMount()
+        componentDidMount()
+        componentWillReceiveProps()
+        shouldComponentUpdate()
+        componentWillUpdate()
+        componentDidUpdate()
+        componentWillUnmount()
+        click handlers or event handlers like onClickSubmit() or onChangeDescription()
+        getter methods for render like getSelectReason() or getFooterContent()
+        optional render methods like renderNavigation() or renderProfilePicture()
+        render()
+
+51. What is a switching component?
+    A switching component is a component that renders one of many components. We need to use object to map prop values to components.
+
+52. Why we need to pass a function to setState()?
+    The reason behind for this is that setState() is an asynchronous operation. React batches state changes for performance reasons, so the state may not change immediately 
+    after setState() is called. That means you should not rely on the current state when calling setState() since you can't be sure what that state will be. The solution is to 
+    pass a function to setState(), with the previous state as an argument. By doing this you can avoid issues with the user getting the old state value on access due to the 
+    asynchronous nature of setState().
+
+    Let's say the initial count value is zero. After three consecutive increment operations, the value is going to be incremented only by one.
+        // assuming this.state.count === 0
+        this.setState({ count: this.state.count + 1 })
+        this.setState({ count: this.state.count + 1 })
+        this.setState({ count: this.state.count + 1 })
+        // this.state.count === 0, not 3
+    If we pass a function to setState(), the count gets incremented correctly.
+
+        this.setState((prevState, props) => ({
+        count: prevState.count + props.increment
+        }))
+        // this.state.count === 3 as expected
+
+53. What is strict mode in React?
+    React.StrictMode is a useful component for highlighting potential problems in an application. Just like <Fragment>, <StrictMode> does not render any extra DOM elements. 
+    It activates additional checks and warnings for its descendants. These checks apply for development mode only.
+
+54. What are the Pointer Events supported in React?
+    Pointer Events provide a unified way of handling all input events. In the old days we had a mouse and respective event listeners to handle them but nowadays we have 
+    many devices which don't correlate to having a mouse, like phones with touch surface or pens. We need to remember that these events will only work in browsers that 
+    support the Pointer Events specification.
+
+    The following event types are now available in React DOM:
+
+        onPointerDown
+        onPointerMove
+        onPointerUp
+        onPointerCancel
+        onGotPointerCapture
+        onLostPointerCapture
+        onPointerEnter
+        onPointerLeave
+        onPointerOver
+        onPointerOut
+
+55. Why should component names start with capital letter? 
+    If you are rendering your component using JSX, the name of that component has to begin with a capital letter otherwise React will throw an error as unrecognized tag. 
+    This convention is because only HTML elements and SVG tags can begin with a lowercase letter.
+
+        class SomeComponent extends Component {
+        // Code goes here
+        }
+    You can define component class which name starts with lowercase letter, but when it's imported it should have capital letter. Here lowercase is fine:
+
+        class myComponent extends Component {
+        render() {
+            return <div />
+        }
+        }
+
+        export default myComponent
+
+    While when imported in another file it should start with capital letter:
+        import MyComponent from './MyComponent'
+
+56. What is the difference between React and ReactDOM?
+    The react package contains React.createElement(), React.Component, React.Children, and other helpers related to elements and component classes. You can think of these 
+    as the isomorphic or universal helpers that you need to build components. The react-dom package contains ReactDOM.render(), and in react-dom/server we have server-side 
+    rendering support with ReactDOMServer.renderToString() and ReactDOMServer.renderToStaticMarkup().
+
+57. How to re-render the view when the browser is resized?
+    You can listen to the resize event in componentDidMount() and then update the dimensions (width and height). You should remove the listener in componentWillUnmount() method.
+
+    class WindowDimensions extends React.Component {
+    constructor(props){
+        super(props);
+        this.updateDimensions = this.updateDimensions.bind(this);
+    }
+    
+    componentWillMount() {
+        this.updateDimensions()
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.updateDimensions)
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDimensions)
+    }
+
+    updateDimensions() {
+        this.setState({width: window.innerWidth, height: window.innerHeight})
+    }
+
+    render() {
+        return <span>{this.state.width} x {this.state.height}</span>
+    }
+    }
+
+58. What are render props?
+    Render Props is a simple technique for sharing code between components using a prop whose value is a function. The below component uses render prop which returns a React element.
+
+        <DataProvider render={data => (
+        <h1>{`Hello ${data.target}`}</h1>
+        )}/>
+    Libraries such as React Router and DownShift are using this pattern.
+
+59.What is React Router?
+    React Router is a powerful routing library built on top of React that helps you add new screens and flows to your application incredibly quickly, all while keeping 
+    the URL in sync with what's being displayed on the page.
+
+60. How React Router is different from history library?
+    React Router is a wrapper around the history library which handles interaction with the browser's window.history with its browser and hash histories. It also provides 
+    memory history which is useful for environments that don't have global history, such as mobile app development (React Native) and unit testing with Node.
+        
+61. What are the <Router> components of React Router v4?
+    React Router v4 provides below 3 <Router> components:
+
+        <BrowserRouter>
+        <HashRouter>
+        <MemoryRouter>
+    The above components will create browser, hash, and memory history instances. React Router v4 makes the properties and methods of the history instance associated with 
+    your router available through the context in the router object.
+
+62. What is the purpose of push() and replace() methods of history?
+    A history instance has two methods for navigation purpose.
+
+        push()
+        replace()
+    If you think of the history as an array of visited locations, 
+    push() will add a new location to the array and replace() will replace the current location in the array with the new one.
+
+63. What is the purpose of the constants in Redux?
+    Constants allows you to easily find all usages of that specific functionality across the project when you use an IDE. It also prevents you from introducing silly bugs 
+    caused by typos – in which case, you will get a ReferenceError immediately.
+
+    Normally we will save them in a single file (constants.js or actionTypes.js).
+
+    export const ADD_TODO = 'ADD_TODO'
+    export const DELETE_TODO = 'DELETE_TODO'
+    export const EDIT_TODO = 'EDIT_TODO'
+    export const COMPLETE_TODO = 'COMPLETE_TODO'
+    export const COMPLETE_ALL = 'COMPLETE_ALL'
+    export const CLEAR_COMPLETED = 'CLEAR_COMPLETED'
+    In Redux, you use them in two places:
+
+    During action creation:
+
+    Let's take actions.js:
+
+    import { ADD_TODO } from './actionTypes';
+
+    export function addTodo(text) {
+    return { type: ADD_TODO, text }
+    }
+    In reducers:
+
+    Let's create reducer.js:
+
+    import { ADD_TODO } from './actionTypes'
+
+    export default (state = [], action) => {
+    switch (action.type) {
+        case ADD_TODO:
+        return [
+            ...state,
+            {
+            text: action.text,
+            completed: false
+            }
+        ];
+        default:
+        return state
+    }
+    }
+
+64. How to structure Redux top level directories?
+    Most of the applications has several top-level directories as below:
+
+        Components: Used for dumb components unaware of Redux.
+        Containers: Used for smart components connected to Redux.
+        Actions: Used for all action creators, where file names correspond to part of the app.
+        Reducers: Used for all reducers, where files name correspond to state key.
+        Store: Used for store initialization.
+    This structure works well for small and medium size apps.
+
+65. What is the difference between Real DOM and Virtual DOM?
+    Below are the main differences between Real DOM and Virtual DOM,
+
+            Real DOM	Virtual DOM
+    Updates are slow	Updates are fast
+    DOM manipulation is very expensive.	DOM manipulation is very easy
+    You can update HTML directly.	You Can’t directly update HTML
+    It causes too much of memory wastage	There is no memory wastage
+    Creates a new DOM if element updates	It updates the JSX if element update
+
+66. Can you list down top websites or applications using react as front end framework?
+    Below are the top 10 websites using React as their front-end framework,
+
+    Facebook
+    Uber
+    Instagram
+    WhatsApp
+    Khan Academy
+    Airbnb
+    Dropbox
+    Flipboard
+    Netflix
+    PayPal
+
+67. Do browsers understand JSX code?
+    No, browsers can't understand JSX code. You need a transpiler to convert your JSX to regular 
+    Javascript that browsers can understand. The most widely used transpiler right now is Babel.
