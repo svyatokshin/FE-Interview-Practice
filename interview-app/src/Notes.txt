@@ -1,5 +1,15 @@
 Front End Notes: 
 
+0. What is React? What do you like/dislike about React?
+    React is an open-source frontend JavaScript library which is used for building user interfaces especially for single page applications. 
+    It is used for handling view layer for web and mobile apps. React was created by Jordan Walke, a software engineer working for Facebook. 
+    React was first deployed on Facebook's News Feed in 2011 and on Instagram in 2012.
+
+    Like: I love how its essentially Advanced Javascript with HTML and CSS sprinkled in. the ability to manipulate data within each component
+        and the ability to see your changes that you make through the server side rendering is amazing. I love that it is also Unidirectional.
+    Dislike: Mainly how fast it is being upgraded. Changes are made to React at an alarming rate and sometimes its hard to keep up with all
+        the new features introduced. 
+
 1. What are the different phases of component lifecycle?
     The component lifecycle has three distinct lifecycle phases:
 
