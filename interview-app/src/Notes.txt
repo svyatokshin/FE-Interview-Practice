@@ -357,9 +357,11 @@ Front End Notes:
     Props manipulation.
 
 28. What is children prop? 
-    Children is a prop (this.props.children) that allow you to pass components as data to other components, just like any other prop you use. Component tree put between component's opening and closing tag will be passed to that component as children prop.
+    Children is a prop (this.props.children) that allow you to pass components as data to other components, just like any other prop you use. Component tree put between 
+    component's opening and closing tag will be passed to that component as children prop.
 
-    There are a number of methods available in the React API to work with this prop. These include React.Children.map, React.Children.forEach, React.Children.count, React.Children.only, React.Children.toArray.
+    There are a number of methods available in the React API to work with this prop. These include React.Children.map, React.Children.forEach, React.Children.count, 
+    React.Children.only, React.Children.toArray.
 
     A simple usage of children prop looks as below,
 
@@ -396,7 +398,8 @@ Front End Notes:
 
 30. What is the purpose of using super constructor with props argument?
 
-    A child class constructor cannot make use of this reference until super() method has been called. The same applies for ES6 sub-classes as well. The main reason of passing props parameter to super() call is to access this.props in your child constructors.
+    A child class constructor cannot make use of this reference until super() method has been called. The same applies for ES6 sub-classes as well. 
+    The main reason of passing props parameter to super() call is to access this.props in your child constructors.
 
     Passing props:
 
@@ -921,3 +924,8 @@ Front End Notes:
 67. Do browsers understand JSX code?
     No, browsers can't understand JSX code. You need a transpiler to convert your JSX to regular 
     Javascript that browsers can understand. The most widely used transpiler right now is Babel.
+
+68. What are synthetic events in React?
+    SyntheticEvent is a cross-browser wrapper around the browser's native event. It's API is same as 
+    the browser's native event, including stopPropagation() and preventDefault(), except the events 
+    work identically across all browsers.
